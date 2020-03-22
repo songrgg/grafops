@@ -38,8 +38,8 @@ func (o *options) validate() {
 func NewGrafOpsCommand() *cobra.Command {
 	options := options{}
 	cmds := &cobra.Command{
-		Use:   "llsh",
-		Short: "llsh executes the remote shell command on multiple remote servers",
+		Use:   "grafops",
+		Short: "grafops manages the Grafana dashboards",
 		Run: func(cmd *cobra.Command, args []string) {
 			options.validate()
 

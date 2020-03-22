@@ -12,9 +12,8 @@ vars:
           TEST_VAR: local_payment
         value: payment
       -
-        context:
-          TEST_VAR: local_payment
-        value: payment
+        context: ~
+        value: user
   -
     name: TEST_VAR
     values:

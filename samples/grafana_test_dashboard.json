@@ -1,0 +1,181 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 1,
+  "iteration": 1584891233788,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "panels": [],
+      "repeat": "SERVICE_NAME",
+      "scopedVars": {
+        "SERVICE_NAME": {
+          "selected": true,
+          "text": "news",
+          "value": "news"
+        }
+      },
+      "title": "$SERVICE_NAME",
+      "type": "row"
+    },
+    {
+      "content": "This is $SERVICE_NAME dashboard.\n\nHere's the variable TEST_VAR= \"$TEST_VAR\".",
+      "datasource": "myinfluxdb",
+      "description": "This is $SERVICE_NAME dashboard.",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 4,
+      "mode": "markdown",
+      "options": {},
+      "scopedVars": {
+        "SERVICE_NAME": {
+          "selected": true,
+          "text": "news",
+          "value": "news"
+        }
+      },
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$SERVICE_NAME",
+      "type": "text"
+    },
+    {
+      "content": "Nothing on this.\n\n\n\n",
+      "datasource": "myinfluxdb",
+      "description": "This is $SERVICE_NAME dashboard.",
+      "gridPos": {
+        "h": 8,
+        "w": 17,
+        "x": 3,
+        "y": 9
+      },
+      "id": 5,
+      "mode": "markdown",
+      "options": {},
+      "scopedVars": {
+        "SERVICE_NAME": {
+          "selected": true,
+          "text": "news",
+          "value": "news"
+        }
+      },
+      "targets": [],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "$SERVICE_NAME ----- 2",
+      "type": "text"
+    }
+  ],
+  "schemaVersion": 21,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "news",
+          "value": "news"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Service Name",
+        "multi": false,
+        "name": "SERVICE_NAME",
+        "options": [
+          {
+            "selected": true,
+            "text": "news",
+            "value": "news"
+          },
+          {
+            "selected": false,
+            "text": "payment",
+            "value": "payment"
+          },
+          {
+            "selected": false,
+            "text": "user",
+            "value": "user"
+          }
+        ],
+        "query": "news,payment,user",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "global",
+          "value": "global"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "TEST_VAR",
+        "options": [
+          {
+            "selected": true,
+            "text": "global",
+            "value": "global"
+          }
+        ],
+        "query": "global",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "**template** service monitoring",
+  "uid": "VoUygmrWz",
+  "version": 2
+}
