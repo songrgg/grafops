@@ -1,0 +1,23 @@
+---
+vars:
+  -
+    name: SERVICE_NAME
+    values:
+      -
+        context:
+          TEST_VAR: local_news
+        value: news
+      -
+        context:
+          TEST_VAR: local_payment
+        value: payment
+      -
+        context:
+          TEST_VAR: local_payment
+        value: payment
+  -
+    name: TEST_VAR
+    values:
+      -
+        context: ~
+        value: global
