@@ -1,19 +1,20 @@
 package grafana
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"math"
 	"net/http"
 	"strings"
 
+	"github.com/grafana-tools/sdk"
 	"github.com/songrgg/grafops/pkg/simplejson"
-	"github.com/songrgg/sdk"
 )
 
 type UpdateConfig struct {
 	APIUrl       string `json:"apiUrl"`
-	TemplateSlug string `json:"templateSlug"`
+	DashboardUID string `json:"dashboardUID"`
 	BasicAuth    string `json:"basicAuth"`
 }
 
@@ -66,8 +67,8 @@ func mergeContext(ctx map[string]string, overrides map[string]string) map[string
 // RenderDashboardWithTemplate renders the grafana dashboard with predefined variables statically.
 // It's similar to the normal grafana dashboard rendering but it will support alerts with template variables.
 func RenderDashboardWithTemplate(config UpdateConfig, vars RenderVars) error {
-	grafcli := sdk.NewClient(config.APIUrl, config.BasicAuth, &http.Client{})
-	rawJsonBytes, prop, err := grafcli.GetRawDashboard(config.TemplateSlug)
+	grafcli, err := sdk.NewClient(config.APIUrl, config.BasicAuth, &http.Client{})
+	rawJsonBytes, prop, err := grafcli.GetRawDashboardByUID(context.Background(), config.DashboardUID)
 	if err != nil {
 		return err
 	}
@@ -76,7 +77,20 @@ func RenderDashboardWithTemplate(config UpdateConfig, vars RenderVars) error {
 	if err != nil {
 		return err
 	}
-	return grafcli.SetRawDashboard(rendered, prop.FolderId)
+
+	// remove id and uid of the template dashboard JSON to create a new dashboard.
+	rendered = removeIDs(rendered)
+	_, err = grafcli.SetRawDashboardWithParam(context.Background(), sdk.RawBoardRequest{
+		Dashboard: rendered,
+		Parameters: sdk.SetDashboardParams{
+			Overwrite: true,
+			FolderID:  prop.FolderID,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // RenderDashboard will render the Grafana dashboard with variables.
@@ -93,6 +107,17 @@ func RenderDashboard(body []byte, vars RenderVars) ([]byte, error) {
 	}
 	rawJson = strings.ReplaceAll(rawJson, "**template**", "")
 	return []byte(rawJson), nil
+}
+
+// removeIDs removes the IDs of dashboard JSON.
+func removeIDs(jsonBytes []byte) []byte {
+	var jsonObject map[string]interface{}
+	_ = json.Unmarshal(jsonBytes, &jsonObject)
+	delete(jsonObject, "id")
+	delete(jsonObject, "uid")
+
+	newBytes, _ := json.Marshal(jsonObject)
+	return newBytes
 }
 
 // renderPanels will populate the repeated panels.

@@ -272,7 +272,7 @@ const ExpectedRendered = `{"annotations":{"list":[{"builtIn":1,"datasource":"-- 
 func TestUpdateDashboardWithTemplate(t *testing.T) {
 	err := RenderDashboardWithTemplate(UpdateConfig{
 		APIUrl:       "http://localhost:3000",
-		TemplateSlug: "template-service-monitoring",
+		DashboardUID: "RKAQZi9Zk",
 		BasicAuth:    "",
 	}, []Var{
 		{

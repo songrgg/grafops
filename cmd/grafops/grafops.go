@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/songrgg/grafops/pkg/grafana"
@@ -18,8 +21,9 @@ func main() {
 
 type options struct {
 	Host         string `json:"host"`
-	TemplateSlug string `json:"templateSlug"`
+	DashboardUID string `json:"dashboardUID"`
 	BasicAuth    string `json:"basicAuth"`
+	ConfigPath   string `json:"configPath"`
 }
 
 func (o *options) validate() {
@@ -28,8 +32,13 @@ func (o *options) validate() {
 		os.Exit(-1)
 	}
 
-	if o.TemplateSlug == "" {
-		fmt.Println("template slug can't be empty")
+	if o.DashboardUID == "" {
+		fmt.Println("template UID can't be empty")
+		os.Exit(-1)
+	}
+
+	if o.ConfigPath == "" {
+		fmt.Println("config path can't be empty")
 		os.Exit(-1)
 	}
 }
@@ -43,11 +52,15 @@ func NewGrafOpsCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			options.validate()
 
-			viper.AddConfigPath(".")
-			err := viper.ReadInConfig()
+			configBytes, err := ioutil.ReadFile(options.ConfigPath)
 			if err != nil {
-				fmt.Printf("Fatal error config file: %s \n", err)
-				os.Exit(-1)
+				log.Fatalf("Configuration file doesn't exist")
+			}
+
+			viper.SetConfigType("yaml")
+			err = viper.ReadConfig(bytes.NewBuffer(configBytes))
+			if err != nil {
+				log.Fatalf("Failed to read configuration file: %v", err)
 			}
 
 			var vars grafana.RenderVars
@@ -59,23 +72,24 @@ func NewGrafOpsCommand() *cobra.Command {
 
 			err = grafana.RenderDashboardWithTemplate(grafana.UpdateConfig{
 				APIUrl:       options.Host,
-				TemplateSlug: options.TemplateSlug,
+				DashboardUID: options.DashboardUID,
 				BasicAuth:    options.BasicAuth,
 			}, vars)
 			if err != nil {
-				fmt.Println("fail to render the Grafana dashboard: ", err)
-				os.Exit(-1)
+				log.Fatalf("fail to render the Grafana dashboard: %v", err)
 			}
-			fmt.Println("Render the dashboard successfully")
+			log.Println("Render the dashboard successfully")
 		},
 	}
 
 	cmds.PersistentFlags().StringVar(&options.Host, "host", "", "The host name for Grafana server")
-	cmds.PersistentFlags().StringVarP(&options.TemplateSlug, "template_slug", "t", "",
-		"The slug of the template dashboard in Grafana, it could be in the URL of Grafana dashboard, for example,"+
-			"http://localhost:3000/d/RKAQZi9Zk/service-monitoring slug is service-monitoring")
+	cmds.PersistentFlags().StringVarP(&options.DashboardUID, "dashboard_uid", "u", "",
+		"The UID of the template dashboard in Grafana, it could be in the URL of Grafana dashboard, for example,"+
+			"http://localhost:3000/d/RKAQZi9Zk/service-monitoring, the UID is `RKAQZi9Zk`")
 	cmds.PersistentFlags().StringVar(&options.BasicAuth, "basic_auth", "",
 		"Basic auth for the Grafana API")
+	cmds.PersistentFlags().StringVarP(&options.ConfigPath, "config_path", "c", "",
+		"Yaml configuration file path")
 
 	return cmds
 }

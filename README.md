@@ -46,7 +46,7 @@ can be the case when you need to setup the `TEST_VAR` to `local_payment` in that
 1. Render it!
 The following command will call the Grafana API to render the template dashboard and finally create another rendered dashboard.
     ```bash
-    go run cmd/grafops/grafops.go --host http://localhost:3000 -t template-service-monitoring
+    go run cmd/grafops/grafops.go --host http://localhost:3000 -u RKAQZi9Zk --basic_auth $GRAFANA_USERNAME:$GRAFANA_PASSWORD -c ./config.yaml
     ```
 
 ## Installation
