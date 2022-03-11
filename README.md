@@ -74,7 +74,7 @@ Access http://localhost:3000/org/apikeys to create an editor/admin API key.
 
 1. Render the dashboard
     ```bash
-    go run cmd/grafops/grafops.go --host http://localhost:3000 -t template-service-monitoring --basic_auth <auth-key>
+    go run cmd/grafops/grafops.go --host http://localhost:3000 -u VoUygmrWz --basic_auth <auth-key> -c config.test.yaml
     ```
    
    There will be a rendered dashboard created.
